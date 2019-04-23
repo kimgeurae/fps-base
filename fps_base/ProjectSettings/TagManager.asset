@@ -3,7 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Ground
+  - Wall
+  - Enemy
+  - Boss
+  - Gun
+  - Colliders
+  - GunVisual
   layers:
   - Default
   - TransparentFX
@@ -40,4 +47,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: GunLayer
+    uniqueID: 2380877593
+    locked: 0
+  - name: New Layer
+    uniqueID: 1690399679
     locked: 0
