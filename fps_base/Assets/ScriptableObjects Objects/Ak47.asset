@@ -25,10 +25,12 @@ MonoBehaviour:
   verticalRecoil: 3
   horizontalRecoil: 0
   reloadTime: 4
-  maxBullets: 90
-  actualBullets: 0
+  actualMagazineBullets: 30
+  actualTotalBullets: 120
   maxMagazineBullets: 30
-  magazineBullets: 0
+  maxTotalBullets: 120
+  isReloading: 0
+  hasLoaded: 1
   weaponType: 0
   shootingType: 0
   _gunVisual: {fileID: 0}
