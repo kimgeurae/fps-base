@@ -7,6 +7,7 @@ public class GunScript : MonoBehaviour
 {
     public Text displayBulletInfo;
     public Text displayDebugShootingMode;
+    public Text displayDebugFiringMode;
     [HideInInspector]
     public GunSO gunSO;
     public GunSO[] _guns = new GunSO[3];
@@ -46,6 +47,7 @@ public class GunScript : MonoBehaviour
     {
         CheckForAllInputs();
         DisplayHudInfo();
+        gunSO.AutoCheck();
     }
 
     // Add all input check methods in this method
@@ -54,14 +56,19 @@ public class GunScript : MonoBehaviour
         CheckForFiringInput();
         CheckForGunChangeInput();
         CheckForReloadInput();
+        CheckForFiringModeInput();
     }
 
     void CheckForFiringInput()
     {
-        if (Input.GetButtonDown("Fire1") && !gunSO.isReloading)
+        if (Input.GetButton("Fire1") && !gunSO.isReloading)
         {
             gunSO.Shoot();
             Debug.Log("Passed Input Check");
+        }
+        if (Input.GetButtonUp("Fire1"))
+        {
+            gunSO.semiCanShoot = true;
         }
     }
 
@@ -75,6 +82,14 @@ public class GunScript : MonoBehaviour
             gunSO.LoadParametersValue();
             DisplayHudInfo();
         }
+    }
+
+    void CheckForFiringModeInput()
+    {
+        if (Input.GetButtonDown("ChangeFiringMode"))
+        {
+            Debug.Log("Input Confirmado para ChangeFiringMode");
+        } 
     }
 
     public void CheckForReloadInput()
@@ -93,6 +108,18 @@ public class GunScript : MonoBehaviour
     {
         displayBulletInfo.text = gunSO.actualMagazineBullets.ToString() + " / " + gunSO.actualTotalBullets.ToString();
         displayDebugShootingMode.text = gunSO.shootingType.ToString();
+        displayDebugFiringMode.text = gunSO.activeFiringMode.ToString();
+    }
+
+    public void StartBurstFire()
+    {
+        if (!gunSO.isBurstFiring)
+        {
+            gunSO.isBurstFiring = true;
+            IEnumerator coroutine = gunSO.FireBurstShoot();
+            StopCoroutine(coroutine);
+            StartCoroutine(coroutine);
+        }
     }
 
 }

@@ -25,7 +25,7 @@ MonoBehaviour:
   verticalRecoil: 3
   horizontalRecoil: 0
   reloadTime: 4
-  actualMagazineBullets: 30
+  actualMagazineBullets: 0
   actualTotalBullets: 120
   maxMagazineBullets: 30
   maxTotalBullets: 120
@@ -33,6 +33,10 @@ MonoBehaviour:
   hasLoaded: 1
   weaponType: 0
   shootingType: 0
+  firingMode: 0100000000000000
+  activeFiringMode: 1
+  semiCanShoot: 1
+  isBurstFiring: 0
   _gunVisual: {fileID: 0}
   _gunMesh: {fileID: 4300000, guid: 25fc5a340df820d4ab01fcc717524c88, type: 3}
   _gunMat: {fileID: 2100000, guid: 958823cb4f2cfeb4f904c98742b89966, type: 2}

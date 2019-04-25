@@ -35,7 +35,37 @@ public class GunSO : ScriptableObject
     public enum ShootingType { raycast, projectile, }
     [HideInInspector]
     public ShootingType shootingType;
+    [HideInInspector]
     public enum FiringMode { semi, auto, burst, charged, buckshot, }
+    public FiringMode[] firingMode;
+    [HideInInspector]
+    public FiringMode activeFiringMode;
+    private int pFiringModeIndex;
+    private int firingModeIndex
+    {
+        get
+        {
+            return pFiringModeIndex;
+        }
+        set
+        {
+            if (pFiringModeIndex >= firingMode.Length - 1)
+            {
+                pFiringModeIndex = 0;
+            }
+            else
+            {
+                pFiringModeIndex = value;
+            }
+        }
+    }
+    private bool isShooting;
+    private float autoCanShoot;
+    [HideInInspector]
+    public bool semiCanShoot = true;
+    [HideInInspector]
+    public bool isBurstFiring = false;
+
 
     [Header("Visuals")]
     public GameObject _gunVisual;
@@ -47,9 +77,13 @@ public class GunSO : ScriptableObject
     public MeshRenderer _gunRenderer;
 
     [Header("References")]
+    [HideInInspector]
     public Transform _gunBarrelEnd;
     public GameObject _bulletPrefab;
+    [HideInInspector]
     public GameObject _fpscam;
+    [HideInInspector]
+    GunScript _gunScript;
 
     [Header("Debug")]
     public bool debugActive;
@@ -69,15 +103,59 @@ public class GunSO : ScriptableObject
         Debug.Log("Called OnEnable");
     }
 
+    public void AutoCheck()
+    {
+        Debug.Log("Auto Check Confirmed");
+        autoCanShoot += Time.deltaTime;
+        //if (activeFiringMode != firingMode[firingModeIndex])
+            activeFiringMode = firingMode[firingModeIndex];
+    }
+
     public void Shoot()
     {
-        Debug.Log("Shoot Method Running");
+        switch (activeFiringMode)
+        {
+            case FiringMode.semi:
+                if (semiCanShoot)
+                {
+                    FireSemiShoot();
+                    semiCanShoot = false;
+                }
+                break;
+            case FiringMode.auto:
+                if (autoCanShoot > 60 / fireRate)
+                {
+                    FireSemiShoot();
+                    autoCanShoot = 0;
+                }
+                break;
+            case FiringMode.burst:
+                _gunScript.StartBurstFire();
+                break;
+            case FiringMode.buckshot:
+                break;
+        }
+    }
+
+    public IEnumerator FireBurstShoot()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            FireSemiShoot();
+            yield return new WaitForSeconds(45 / fireRate);
+        }
+        isBurstFiring = false;
+    }
+
+    private void FireSemiShoot()
+    {
+        //Debug.Log("Shoot Method Running");
         switch (shootingType)
         {
             case ShootingType.raycast:
                 if (actualMagazineBullets > 0)
                 {
-                    Debug.Log("ShootRaycast running");
+                    //Debug.Log("ShootRaycast running");
                     RaycastHit hit;
                     if (debugActive)
                         Debug.DrawLine(_fpscam.transform.position + Vector3.forward * 0.6f, _fpscam.transform.forward * range, Color.cyan, 0.25f);
@@ -114,6 +192,7 @@ public class GunSO : ScriptableObject
         _gunFilter.mesh = _gunMesh;
         _gunRenderer = _gunVisual.GetComponent<MeshRenderer>();
         _gunRenderer.material = _gunMat;
+        _gunScript = GameObject.FindGameObjectWithTag("GunScripts").GetComponent<GunScript>();
         if (!hasLoaded)
             actualTotalBullets = maxTotalBullets;
         if (!hasLoaded)
@@ -139,6 +218,8 @@ public class GunSO : ScriptableObject
             actualMagazineBullets -= shootsFired;
         }
     }
+
+
 
     public void ReloadGun()
     {
