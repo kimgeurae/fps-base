@@ -6,42 +6,71 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "new Gun", menuName = "Gun")]
 public class GunSO : ScriptableObject
 {
-    [Header("Gun Info")]
+    #region Variables.
+    #region Gun Chart header.
+    [Header("Gun Chart")]
+    #endregion
+    #region Gun Info (Name, Description, Enums).
+    [Header("Basic Info")]
+    [Tooltip("Name of the Gun, used when hovering the gun.")]
     public new string name;
-    [TextArea] // Spacement
+    [Tooltip("Basic description of the gun, don't make it too long.")]
+    [TextArea]
     public string description;
-
-    [Header("Properties")]
-    public int dmg;
-    public float critChance;
-    public int critDmgRate;
-    public int range;
-    public float fireRate; // 0 means semi-auto
-    public float verticalRecoil;
-    public float horizontalRecoil;
-    public float reloadTime;
     [HideInInspector]
-    public int actualMagazineBullets = 0;
-    [HideInInspector]
-    public int actualTotalBullets = 0;
-    public int maxMagazineBullets;
-    public int maxTotalBullets;
-    public bool isReloading = false;
-    public bool hasLoaded = false;
-
-    public enum WeaponType { AR, SMG, SR, DMR, SG, PBG }
-    public WeaponType weaponType;
+    public enum GunType { AR, SMG, SR, DMR, SG, PBG, }
+    [Tooltip("The type of the gun.")]
+    public GunType gunType;
     [HideInInspector]
     public enum ShootingType { raycast, projectile, }
-    [HideInInspector]
+    [Tooltip("The type of shoot that the gun will use.")]
     public ShootingType shootingType;
     [HideInInspector]
     public enum FiringMode { semi, auto, burst, charged, buckshot, }
+    [Tooltip("Select the firing modes that will be avaliable to the player.")]
     public FiringMode[] firingMode;
     [HideInInspector]
-    public FiringMode activeFiringMode;
-    private int pFiringModeIndex;
-    private int firingModeIndex
+    public FiringMode currentFiringMode;
+    #endregion
+    #region Gun Properties.
+    [Header("Properties")]
+    [Tooltip("Base damage of the gun.")]
+    public int dmg;
+    [Tooltip("Effective range of the gun.")]
+    public int range;
+    [Tooltip("Fire rate of the weapon. Value in shoots per second.")]
+    public int firerate;
+    [Tooltip("The up recoil of the gun.")]
+    [Range(0, 50)]
+    public float verticalRecoil;
+    [Tooltip("The sides recoil of the gun.")]
+    [Range(0, 50)]
+    public float horizontalRecoil;
+    [Tooltip("Time that takes for the player to reload the gun. In seconds.")]
+    public float reloadTime;
+    [Tooltip("The maximum amount of bullets that can fit in the magazine.")]
+    public int maxMagazineBullets;
+    [Tooltip("The amount of magazines that player have at start. E.G. If the magazine fits 30 bullets, and you want the maximum amount of bullets avaliable at the start of the game to be 120, this should be 4")]
+    public int startingMagazines;
+
+    // Private Variables: (Related to Gun Properties)
+    [HideInInspector]
+    public float criticalChance;               // The chance for the player to land a critical hit.
+    [HideInInspector]
+    public float criticalDamageRate;             // The value that will multiply the base dmg value when landing a critical hit.
+    [HideInInspector]
+    public int currentMagazineBullets;         // The amount of bullets that are currently avaliable in the magazine.
+    [HideInInspector]
+    public int currentTotalBullets;            // The amount of bullets that are currently avaliable in total.
+    [HideInInspector]
+    public bool isReloading;                   // Control variable that tell us if the player is reloading. Used to prevent shooting/reloading if the player is already reloading.
+    [HideInInspector]
+    public bool isShooting;                    // Control variable that tell us if te player is shooting. Used to prevent shooting/reloading if the player is already shooting (E.G. used to prevent fast firing in burst mode).
+    [HideInInspector]
+    public bool startHasLoadedBullets;         // Tell us either or not the Method has loaded the bullet when a gun is loaded for the first time.
+    private int pFiringModeIndex;              // This variable is the holder holder of the value and cannot be acessed externally, to acess it use firingModeIndex.
+    [HideInInspector]
+    public int firingModeIndex                 // This variable controls which firing mode is selected.
     {
         get
         {
@@ -49,7 +78,7 @@ public class GunSO : ScriptableObject
         }
         set
         {
-            if (pFiringModeIndex >= firingMode.Length - 1)
+            if (pFiringModeIndex > firingMode.Length - 1)
             {
                 pFiringModeIndex = 0;
             }
@@ -59,197 +88,16 @@ public class GunSO : ScriptableObject
             }
         }
     }
-    private bool isShooting;
-    private float autoCanShoot;
-    [HideInInspector]
-    public bool semiCanShoot = true;
-    [HideInInspector]
-    public bool isBurstFiring = false;
-
-
+    #endregion
+    #region Gun Visual.
     [Header("Visuals")]
-    public GameObject _gunVisual;
+    [Tooltip("The mesh of the gun that will be displayed")]
     public Mesh _gunMesh;
-    public Material _gunMat;
-    [HideInInspector]
-    public MeshFilter _gunFilter;
-    [HideInInspector]
-    public MeshRenderer _gunRenderer;
-
-    [Header("References")]
-    [HideInInspector]
-    public Transform _gunBarrelEnd;
-    public GameObject _bulletPrefab;
-    [HideInInspector]
-    public GameObject _fpscam;
-    [HideInInspector]
-    GunScript _gunScript;
-
-    [Header("Debug")]
-    public bool debugActive;
-
-    public GunSO()
-    {
-        Debug.Log("Called Construtor");
-    }
-
-    private void Awake()
-    {
-        Debug.Log("Called Awake");
-    }
-
-    private void OnEnable()
-    {
-        Debug.Log("Called OnEnable");
-    }
-
-    public void AutoCheck()
-    {
-        Debug.Log("Auto Check Confirmed");
-        autoCanShoot += Time.deltaTime;
-        //if (activeFiringMode != firingMode[firingModeIndex])
-            activeFiringMode = firingMode[firingModeIndex];
-    }
-
-    public void Shoot()
-    {
-        switch (activeFiringMode)
-        {
-            case FiringMode.semi:
-                if (semiCanShoot)
-                {
-                    FireSemiShoot();
-                    semiCanShoot = false;
-                }
-                break;
-            case FiringMode.auto:
-                if (autoCanShoot > 60 / fireRate)
-                {
-                    FireSemiShoot();
-                    autoCanShoot = 0;
-                }
-                break;
-            case FiringMode.burst:
-                _gunScript.StartBurstFire();
-                break;
-            case FiringMode.buckshot:
-                break;
-        }
-    }
-
-    public IEnumerator FireBurstShoot()
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            FireSemiShoot();
-            yield return new WaitForSeconds(45 / fireRate);
-        }
-        isBurstFiring = false;
-    }
-
-    private void FireSemiShoot()
-    {
-        //Debug.Log("Shoot Method Running");
-        switch (shootingType)
-        {
-            case ShootingType.raycast:
-                if (actualMagazineBullets > 0)
-                {
-                    //Debug.Log("ShootRaycast running");
-                    RaycastHit hit;
-                    if (debugActive)
-                        Debug.DrawLine(_fpscam.transform.position + Vector3.forward * 0.6f, _fpscam.transform.forward * range, Color.cyan, 0.25f);
-                    if (Physics.Raycast(_fpscam.transform.position + Vector3.forward * 0.6f, _fpscam.transform.forward, out hit, range))
-                    {
-                        if (hit.transform.gameObject.CompareTag("Enemy"))
-                        {
-                            bool isCrit = Random.value < critChance;
-                            if (isCrit)
-                                hit.transform.gameObject.GetComponent<EnemyScript>().LocalApplyDamage(dmg * critDmgRate);
-                            else
-                                hit.transform.gameObject.GetComponent<EnemyScript>().LocalApplyDamage(dmg);
-                        }
-                    }
-                    LowerMagazineBullets(1);
-                }
-                break;
-            case ShootingType.projectile:
-                Instantiate(_bulletPrefab, _gunBarrelEnd.position, Quaternion.identity);
-                break;
-        }
-    }
-
-    public int Reload(int a)
-    {
-        return a;
-    }
-
-    public void LoadParametersValue()
-    {
-        _fpscam = GameObject.FindGameObjectWithTag("MainCamera");
-        _gunVisual = GameObject.FindGameObjectWithTag("GunVisual");
-        _gunFilter = _gunVisual.GetComponent<MeshFilter>();
-        _gunFilter.mesh = _gunMesh;
-        _gunRenderer = _gunVisual.GetComponent<MeshRenderer>();
-        _gunRenderer.material = _gunMat;
-        _gunScript = GameObject.FindGameObjectWithTag("GunScripts").GetComponent<GunScript>();
-        if (!hasLoaded)
-            actualTotalBullets = maxTotalBullets;
-        if (!hasLoaded)
-            actualMagazineBullets = maxMagazineBullets;
-        if (weaponType == WeaponType.SR)
-        {
-            fireRate = 0;
-        }
-        if (_bulletPrefab != null)
-        {
-
-        }
-        hasLoaded = true;
-    }
-
-    private void LowerMagazineBullets(int shootsFired)
-    {
-        Debug.Log("LowerMagazineBullets method fired");
-        if (actualMagazineBullets > 0)
-        {
-            Debug.Log("Magazine Bullets was lowered");
-            Debug.Log(actualMagazineBullets);
-            actualMagazineBullets -= shootsFired;
-        }
-    }
-
-
-
-    public void ReloadGun()
-    {
-        if (actualMagazineBullets == 0)
-        {
-            if (actualTotalBullets > maxMagazineBullets)
-            {
-                actualMagazineBullets = maxMagazineBullets;
-                actualTotalBullets -= maxMagazineBullets;
-            }
-            else
-            {
-                actualMagazineBullets = actualTotalBullets;
-                actualTotalBullets = 0;
-            }
-        }
-        else
-        {
-            if (actualTotalBullets > maxMagazineBullets - actualMagazineBullets)
-            {
-                int valueToBeSubtracted = maxMagazineBullets - actualMagazineBullets;
-                actualMagazineBullets = maxMagazineBullets;
-                actualTotalBullets -= valueToBeSubtracted;
-            }
-            else
-            {
-                actualMagazineBullets += actualTotalBullets;
-                actualTotalBullets = 0;
-            }
-        }
-    }
-
+    [Tooltip("The material of the gun that will be displayed")]
+    public Material _gunMaterial;
+    #endregion
+    #region Gun Extras.
+    public bool debugMode;                     // Toggle debug mode for testing in editor mode.
+    #endregion
+    #endregion
 }

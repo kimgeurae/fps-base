@@ -12,6 +12,7 @@ TagManager:
   - Colliders
   - GunVisual
   - GunScripts
+  - GroundCheck
   layers:
   - Default
   - TransparentFX
