@@ -80,7 +80,7 @@ public class PlayerBehaviourScript : MonoBehaviour
         Vector3 strafeMove = transform.right * x;
         Vector3 move = forwardMove + strafeMove;
         _charController.Move(move * moveSpeed * Time.deltaTime);
-        Debug.Log(move);
+        //Debug.Log(move);
     }
 
     private void CustomPhysics()
@@ -106,12 +106,12 @@ public class PlayerBehaviourScript : MonoBehaviour
             velocityY.y = Mathf.Clamp(velocityY.y, -100f, 100f);
             _charController.Move(velocityY * Time.deltaTime);
         }
-        Debug.Log(velocityY);
+        //Debug.Log(velocityY);
     }
 
     private void GroundCheck()
     {
-        Debug.Log(isGrounded);
+        //Debug.Log(isGrounded);
         if (Physics.CheckSphere(_groundCheck.transform.position, 0.1f))
             isGrounded = true;
         else

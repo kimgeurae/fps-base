@@ -16,31 +16,25 @@ MonoBehaviour:
   description: The Remington Model 870 is a pump-action shotgun manufactured by Remington
     Arms Company, LLC. It is widely used by the public for sport shooting, hunting,
     and self-defense and used by law enforcement and military organizations worldwide.
-  dmg: 80
-  critChance: 0.1
-  critDmgRate: 3
+  gunType: 4
+  shootingType: 0
+  firingMode: 04000000
+  currentFiringMode: 4
+  dmg: 12
   range: 12
-  fireRate: 0
-  verticalRecoil: 50
+  firerate: 0
+  verticalRecoil: 30
   horizontalRecoil: 0
   reloadTime: 6
-  actualMagazineBullets: 3
-  actualTotalBullets: 12
   maxMagazineBullets: 4
-  maxTotalBullets: 12
+  startingMagazines: 3
+  criticalChance: 0.2
+  criticalDamageRate: 2
+  currentMagazineBullets: 4
+  currentTotalBullets: 12
   isReloading: 0
-  hasLoaded: 1
-  weaponType: 4
-  shootingType: 0
-  firingMode: 00000000
-  activeFiringMode: 0
-  semiCanShoot: 1
-  _gunVisual: {fileID: 0}
+  isShooting: 0
+  startHasLoadedBullets: 0
   _gunMesh: {fileID: 4300000, guid: 95addcfa45329854fbfcf27cbcbc68a4, type: 3}
-  _gunMat: {fileID: 2100000, guid: e826b1c41bd171c4d978c257dceee3c5, type: 2}
-  _gunFilter: {fileID: 0}
-  _gunRenderer: {fileID: 0}
-  _gunBarrelEnd: {fileID: 0}
-  _bulletPrefab: {fileID: 0}
-  _fpscam: {fileID: 0}
-  debugActive: 1
+  _gunMaterial: {fileID: 0}
+  debugMode: 0

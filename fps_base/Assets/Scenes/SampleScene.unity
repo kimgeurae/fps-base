@@ -1272,11 +1272,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 778dfd81f60febb49b955f5a1869a4bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayBulletCountInfo: {fileID: 0}
-  displayDebugShootingType: {fileID: 0}
+  displayBulletCountInfo: {fileID: 1807676818}
+  displayDebugShootingType: {fileID: 1324910799}
   displayDebugFiringMode: {fileID: 787224424}
   scriptableObject: {fileID: 0}
   _guns:
-  - {fileID: 11400000, guid: 2128e94abe6e6124c9f092f7450d627c, type: 2}
-  - {fileID: 11400000, guid: d3521be85f416bc40ad74558c4036904, type: 2}
   - {fileID: 11400000, guid: 721f2b525e9a77f4a88a8a51b5dd4e9a, type: 2}

@@ -52,6 +52,8 @@ public class GunSO : ScriptableObject
     public int maxMagazineBullets;
     [Tooltip("The amount of magazines that player have at start. E.G. If the magazine fits 30 bullets, and you want the maximum amount of bullets avaliable at the start of the game to be 120, this should be 4")]
     public int startingMagazines;
+    [Tooltip("The number of pellets for the shootgun.")]
+    public int numberOfPellets;
 
     // Private Variables: (Related to Gun Properties)
     [HideInInspector]
@@ -68,6 +70,8 @@ public class GunSO : ScriptableObject
     public bool isShooting;                    // Control variable that tell us if te player is shooting. Used to prevent shooting/reloading if the player is already shooting (E.G. used to prevent fast firing in burst mode).
     [HideInInspector]
     public bool startHasLoadedBullets;         // Tell us either or not the Method has loaded the bullet when a gun is loaded for the first time.
+    [HideInInspector]
+    public bool hasReleasedTrigger;
     private int pFiringModeIndex;              // This variable is the holder holder of the value and cannot be acessed externally, to acess it use firingModeIndex.
     [HideInInspector]
     public int firingModeIndex                 // This variable controls which firing mode is selected.

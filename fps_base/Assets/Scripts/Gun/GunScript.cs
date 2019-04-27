@@ -25,12 +25,16 @@ public class GunScript : MonoBehaviour
     private float arCriticalChance;
     #endregion
 
+    #region Shoot Variables.
+    private float shootDelay;
+    #endregion
+
     #region Scriptable Object Related Variables.
     [Header("Scriptable Object Related Variables")]
     [HideInInspector]
     public GunSO scriptableObject;
     public GunSO[] _guns;
-    private int gunsIndexValue;                                 // Used for storing the data about which gun from the _guns array we're using.
+    private int gunsIndexValue = 0;                                 // Used for storing the data about which gun from the _guns array we're using.
     #endregion
 
     #region Reference Variables.
@@ -39,8 +43,10 @@ public class GunScript : MonoBehaviour
 
     private void Start()
     {
+        SetDefaultGun();
         LoadReferenceVariables();
         SetScriptableObjectValues();
+        SetShootingVariables();
     }
 
     private void SetScriptableObjectValues()
@@ -100,9 +106,20 @@ public class GunScript : MonoBehaviour
         _fpscam = GameObject.FindGameObjectWithTag("MainCamera");
     }
 
+    private void SetShootingVariables()
+    {
+        shootDelay = Time.time + 60 / scriptableObject.firerate;
+    }
+
+    private void SetDefaultGun()
+    {
+        scriptableObject = _guns[gunsIndexValue];
+    }
+
     private void Update()
     {
-
+        PlayerShootInput();
+        ManageAndUpdateUI();
     }
 
     private void ManageAndUpdateUI()
@@ -115,31 +132,122 @@ public class GunScript : MonoBehaviour
 
     private void ReloadGun()
     {
-        if (scriptableObject.currentMagazineBullets == 0)
+        int amountToReload = scriptableObject.maxMagazineBullets - scriptableObject.currentMagazineBullets;
+        if (scriptableObject.currentTotalBullets >= amountToReload)
         {
-            if (scriptableObject.currentTotalBullets > scriptableObject.maxMagazineBullets)
+            scriptableObject.currentMagazineBullets = scriptableObject.currentMagazineBullets + amountToReload;
+            scriptableObject.currentTotalBullets = scriptableObject.currentTotalBullets - amountToReload;
+        }
+        else if (scriptableObject.currentTotalBullets > 0 && scriptableObject.currentTotalBullets < amountToReload)
+        {
+            amountToReload = scriptableObject.currentTotalBullets;
+            scriptableObject.currentMagazineBullets = scriptableObject.currentMagazineBullets + amountToReload;
+            scriptableObject.currentTotalBullets = 0;
+        }
+        else
+        {
+            Debug.Log("Acabou bala R.I.P");
+        }
+    }
+
+    private void PlayerShootInput()
+    {
+        if (Input.GetButton("Fire1") && Time.time >= shootDelay && scriptableObject.currentMagazineBullets > 0)
+        {
+            switch (scriptableObject.currentFiringMode)
             {
-                scriptableObject.currentMagazineBullets = scriptableObject.maxMagazineBullets;
-                scriptableObject.currentTotalBullets -= scriptableObject.maxMagazineBullets;
+                case GunSO.FiringMode.auto:
+                    shootDelay = Time.time + 60f / scriptableObject.firerate;
+                    Shoot();
+                    break;
+                case GunSO.FiringMode.semi:
+                case GunSO.FiringMode.buckshot:
+                case GunSO.FiringMode.charged:
+                    // Uses one more verification to disable autofiring
+                    if (scriptableObject.hasReleasedTrigger)
+                    {
+                        shootDelay = Time.time + 60f / scriptableObject.firerate;
+                        Shoot();
+                        scriptableObject.hasReleasedTrigger = false;
+                    }
+                    break;
+                case GunSO.FiringMode.burst:
+                    if (scriptableObject.hasReleasedTrigger)
+                    {
+                        shootDelay = Time.time + 60f / scriptableObject.firerate;
+                        Shoot();
+                        scriptableObject.hasReleasedTrigger = false;
+                    }
+                    break;
             }
-            else
+        }
+        if (Input.GetButtonUp("Fire1"))
+        {
+            scriptableObject.hasReleasedTrigger = true;
+        }
+        if (Input.GetButtonDown("Reload"))
+        {
+            ReloadGun();
+        }
+    }
+
+    private void Shoot()
+    {
+        switch (scriptableObject.currentFiringMode)
+        {
+            case GunSO.FiringMode.charged:
+            case GunSO.FiringMode.semi:
+            case GunSO.FiringMode.auto:
+                ShootRaycast(false);
+                SubtractMagazineBullets(1);
+                break;
+            case GunSO.FiringMode.buckshot:
+                for (int i = 0; i < scriptableObject.numberOfPellets; i++)
+                {
+                    ShootRaycast(true);
+                }
+                SubtractMagazineBullets(1);
+                break;
+            case GunSO.FiringMode.burst:
+                StartCoroutine("BurstShoot");
+                break;
+        }
+    }
+
+    private IEnumerator BurstShoot()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            ShootRaycast(false);
+            SubtractMagazineBullets(1);
+            yield return new WaitForSeconds(60 / (scriptableObject.firerate *1.25f));
+        }
+    }
+
+    private void ShootRaycast(bool spread)
+    {
+        RaycastHit hit;
+        if (!spread)
+        {
+            Debug.DrawRay(_fpscam.transform.position, _fpscam.transform.TransformDirection(Vector3.forward) * scriptableObject.range, Color.blue, 0.05f);
+            if (Physics.Raycast(_fpscam.transform.position, _fpscam.transform.forward, out hit, 100f))
             {
-                scriptableObject.currentMagazineBullets = scriptableObject.currentTotalBullets;
-                scriptableObject.currentTotalBullets = 0;
+                if (hit.transform.gameObject.CompareTag("Enemy"))
+                {
+                    //Dmg enemy.
+                }
             }
         }
         else
         {
-            if (scriptableObject.currentTotalBullets > scriptableObject.maxMagazineBullets - scriptableObject.currentTotalBullets)
+            Vector3 bulletSpread = new Vector3(Random.value * 2f, Random.value * 2f, Random.value * 2f);
+            Debug.DrawRay(_fpscam.transform.position, (_fpscam.transform.transform.forward * scriptableObject.range) + bulletSpread, Color.blue, 10f);
+            if (Physics.Raycast(_fpscam.transform.position, _fpscam.transform.forward + bulletSpread, out hit, 100f))
             {
-                int valueToBeSubtracted = scriptableObject.maxMagazineBullets - scriptableObject.currentTotalBullets;
-                scriptableObject.currentMagazineBullets = scriptableObject.maxMagazineBullets;
-                scriptableObject.currentTotalBullets -= valueToBeSubtracted;
-            }
-            else
-            {
-                scriptableObject.currentMagazineBullets += scriptableObject.currentTotalBullets;
-                scriptableObject.currentTotalBullets = 0;
+                if (hit.transform.gameObject.CompareTag("Enemy"))
+                {
+                    //Dmg enemy.
+                }
             }
         }
     }

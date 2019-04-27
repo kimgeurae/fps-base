@@ -17,32 +17,27 @@ MonoBehaviour:
     como Kalashnikov, \xE9 um fuzil de assalto de calibre 7,62x39mm criado em 1947
     por Mikhail Kalashnikov e produzido na Uni\xE3o Sovi\xE9tica pela ind\xFAstria
     estatal IZH. \xC9 a arma de fogo origin\xE1ria da fam\xEDlia de fuzis Kalashnikov."
+  gunType: 0
+  shootingType: 0
+  firingMode: 0400000000000000
+  currentFiringMode: 4
   dmg: 30
-  critChance: 0.1
-  critDmgRate: 2
-  range: 300
-  fireRate: 600
+  range: 12
+  firerate: 600
   verticalRecoil: 3
   horizontalRecoil: 0
   reloadTime: 4
-  actualMagazineBullets: 0
-  actualTotalBullets: 120
   maxMagazineBullets: 30
-  maxTotalBullets: 120
+  startingMagazines: 3
+  numberOfPellets: 20
+  criticalChance: 0.1
+  criticalDamageRate: 2.5
+  currentMagazineBullets: 26
+  currentTotalBullets: 90
   isReloading: 0
-  hasLoaded: 1
-  weaponType: 0
-  shootingType: 0
-  firingMode: 0100000000000000
-  activeFiringMode: 1
-  semiCanShoot: 1
-  isBurstFiring: 0
-  _gunVisual: {fileID: 0}
+  isShooting: 0
+  startHasLoadedBullets: 0
+  hasReleasedTrigger: 1
   _gunMesh: {fileID: 4300000, guid: 25fc5a340df820d4ab01fcc717524c88, type: 3}
-  _gunMat: {fileID: 2100000, guid: 958823cb4f2cfeb4f904c98742b89966, type: 2}
-  _gunFilter: {fileID: 0}
-  _gunRenderer: {fileID: 0}
-  _gunBarrelEnd: {fileID: 0}
-  _bulletPrefab: {fileID: 0}
-  _fpscam: {fileID: 0}
-  debugActive: 1
+  _gunMaterial: {fileID: 0}
+  debugMode: 0
