@@ -24,32 +24,28 @@ MonoBehaviour:
     has semi-automatic and three-round burst firing modes (like the M16A2 and M16A4),
     while the M4A1 has semi-automatic and fully automatic firing modes (like the M16A1
     and M16A3)."
-  dmg: 30
-  critChance: 0.1
-  critDmgRate: 2
+  gunType: 0
+  shootingType: 0
+  firingMode: 010000000000000002000000
+  currentFiringMode: 1
+  dmg: 27
   range: 500
-  fireRate: 950
+  firerate: 750
   verticalRecoil: 2
   horizontalRecoil: 0
   reloadTime: 5
-  actualMagazineBullets: 0
-  actualTotalBullets: 0
   maxMagazineBullets: 30
-  maxTotalBullets: 90
+  startingMagazines: 4
+  numberOfPellets: 0
+  criticalChance: 0.1
+  criticalDamageRate: 2.5
+  currentMagazineBullets: 30
+  currentTotalBullets: 120
   isReloading: 0
-  hasLoaded: 1
-  weaponType: 0
-  shootingType: 0
-  firingMode: 020000000100000000000000
-  activeFiringMode: 2
-  semiCanShoot: 1
-  isBurstFiring: 0
-  _gunVisual: {fileID: 0}
+  isShooting: 0
+  startHasLoadedBullets: 0
+  hasReleasedTrigger: 1
   _gunMesh: {fileID: 4300000, guid: e4b6d0a5972147e429bd25c56fbe6da3, type: 3}
-  _gunMat: {fileID: 2100000, guid: efd98f37150f47e40844e3e6a4559920, type: 2}
-  _gunFilter: {fileID: 0}
-  _gunRenderer: {fileID: 0}
-  _gunBarrelEnd: {fileID: 0}
-  _bulletPrefab: {fileID: 0}
-  _fpscam: {fileID: 0}
-  debugActive: 1
+  _gunMaterial: {fileID: 2100000, guid: efd98f37150f47e40844e3e6a4559920, type: 2}
+  _bullet: {fileID: 4512465721820646795, guid: b708a968939744346be02e1b338af4c8, type: 3}
+  debugMode: 1

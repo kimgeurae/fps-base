@@ -22,12 +22,13 @@ MonoBehaviour:
   currentFiringMode: 4
   dmg: 12
   range: 12
-  firerate: 0
+  firerate: 200
   verticalRecoil: 30
   horizontalRecoil: 0
   reloadTime: 6
   maxMagazineBullets: 4
   startingMagazines: 3
+  numberOfPellets: 20
   criticalChance: 0.2
   criticalDamageRate: 2
   currentMagazineBullets: 4
@@ -35,6 +36,8 @@ MonoBehaviour:
   isReloading: 0
   isShooting: 0
   startHasLoadedBullets: 0
+  hasReleasedTrigger: 1
   _gunMesh: {fileID: 4300000, guid: 95addcfa45329854fbfcf27cbcbc68a4, type: 3}
-  _gunMaterial: {fileID: 0}
-  debugMode: 0
+  _gunMaterial: {fileID: 2100000, guid: e826b1c41bd171c4d978c257dceee3c5, type: 2}
+  _bullet: {fileID: 4512465721820646795, guid: b708a968939744346be02e1b338af4c8, type: 3}
+  debugMode: 1

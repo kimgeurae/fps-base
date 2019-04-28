@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyScript : MonoBehaviour
 {
 
-    int health;
+    public int health;
 
     public EnemySO enemySO;
 
@@ -15,15 +15,23 @@ public class EnemyScript : MonoBehaviour
         
     }
 
+
+
     // Update is called once per frame
     void Update()
     {
         
     }
 
-    public void LocalApplyDamage(int receivedDmg)
+    public void ApplyDamage(int receivedDmg)
     {
-        health = enemySO.ApplyDamage(health, receivedDmg);
+        if (health - receivedDmg > 0)
+            health -= receivedDmg;
+        else
+        {
+            health = 0;
+            Destroy(this.gameObject);
+        }
     }
 
 }

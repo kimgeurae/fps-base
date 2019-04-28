@@ -42,8 +42,8 @@ public class PlayerBehaviourScript : MonoBehaviour
     {
         _player = this.transform.parent.gameObject;
         _charController = _player.GetComponent<CharacterController>();
-        _groundCheck = this.transform.parent.transform.GetChild(5).gameObject;
-        _fpscam = this.transform.parent.transform.GetChild(4).gameObject;
+        _groundCheck = this.transform.parent.transform.GetChild(4).gameObject;
+        _fpscam = this.transform.parent.transform.GetChild(3).gameObject;
     }
 
     void Update()

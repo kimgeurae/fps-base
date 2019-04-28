@@ -72,7 +72,7 @@ public class GunSO : ScriptableObject
     public bool startHasLoadedBullets;         // Tell us either or not the Method has loaded the bullet when a gun is loaded for the first time.
     [HideInInspector]
     public bool hasReleasedTrigger;
-    private int pFiringModeIndex;              // This variable is the holder holder of the value and cannot be acessed externally, to acess it use firingModeIndex.
+    private int pFiringModeIndex = 0;              // This variable is the holder holder of the value and cannot be acessed externally, to acess it use firingModeIndex.
     [HideInInspector]
     public int firingModeIndex                 // This variable controls which firing mode is selected.
     {
@@ -82,13 +82,13 @@ public class GunSO : ScriptableObject
         }
         set
         {
-            if (pFiringModeIndex > firingMode.Length - 1)
+            if (pFiringModeIndex < firingMode.Length - 1)
             {
-                pFiringModeIndex = 0;
+                pFiringModeIndex = value;
             }
             else
             {
-                pFiringModeIndex = value;
+                pFiringModeIndex = 0;
             }
         }
     }
@@ -99,6 +99,8 @@ public class GunSO : ScriptableObject
     public Mesh _gunMesh;
     [Tooltip("The material of the gun that will be displayed")]
     public Material _gunMaterial;
+    [Tooltip("The bullet that will spawn")]
+    public GameObject _bullet;
     #endregion
     #region Gun Extras.
     public bool debugMode;                     // Toggle debug mode for testing in editor mode.

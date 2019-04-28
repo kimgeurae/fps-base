@@ -39,14 +39,27 @@ public class GunScript : MonoBehaviour
 
     #region Reference Variables.
     private GameObject _fpscam;
+    private GameObject _gunVisual;
+    private MeshFilter _meshFilter;
+    private MeshRenderer _meshRenderer;
+    private Transform _bulletSpawn;
     #endregion
 
     private void Start()
     {
-        SetDefaultGun();
-        LoadReferenceVariables();
+        SetGun();
         SetScriptableObjectValues();
+        LoadReferenceVariables();
         SetShootingVariables();
+        LoadGunVisual();
+    }
+
+    private void ReloadGunInfos()
+    {
+        SetGun();
+        LoadReferenceVariables();
+        SetShootingVariables();
+        LoadGunVisual();
     }
 
     private void SetScriptableObjectValues()
@@ -60,42 +73,43 @@ public class GunScript : MonoBehaviour
                     gun.criticalDamageRate = 2.5f;
                     gun.currentMagazineBullets = gun.maxMagazineBullets;
                     gun.currentTotalBullets = gun.maxMagazineBullets * gun.startingMagazines;
-                    gun.currentFiringMode = gun.firingMode[gun.firingModeIndex];
+                    Debug.Log(gun.firingModeIndex);
+                    gun.currentFiringMode = gun.firingMode[0];
                     break;
                 case GunSO.GunType.SMG:
                     gun.criticalChance = 0.3f;
                     gun.criticalDamageRate = 1.5f;
                     gun.currentMagazineBullets = gun.maxMagazineBullets;
                     gun.currentTotalBullets = gun.maxMagazineBullets * gun.startingMagazines;
-                    gun.currentFiringMode = gun.firingMode[gun.firingModeIndex];
+                    gun.currentFiringMode = gun.firingMode[0];
                     break;
                 case GunSO.GunType.SG:
                     gun.criticalChance = 0.2f;
                     gun.criticalDamageRate = 2f;
                     gun.currentMagazineBullets = gun.maxMagazineBullets;
                     gun.currentTotalBullets = gun.maxMagazineBullets * gun.startingMagazines;
-                    gun.currentFiringMode = gun.firingMode[gun.firingModeIndex];
+                    gun.currentFiringMode = gun.firingMode[0];
                     break;
                 case GunSO.GunType.DMR:
                     gun.criticalChance = 0.1f;
                     gun.criticalDamageRate = 1.2f;
                     gun.currentMagazineBullets = gun.maxMagazineBullets;
                     gun.currentTotalBullets = gun.maxMagazineBullets * gun.startingMagazines;
-                    gun.currentFiringMode = gun.firingMode[gun.firingModeIndex];
+                    gun.currentFiringMode = gun.firingMode[0];
                     break;
                 case GunSO.GunType.SR:
                     gun.criticalChance = 0.1f;
                     gun.criticalDamageRate = 4f;
                     gun.currentMagazineBullets = gun.maxMagazineBullets;
                     gun.currentTotalBullets = gun.maxMagazineBullets * gun.startingMagazines;
-                    gun.currentFiringMode = gun.firingMode[gun.firingModeIndex];
+                    gun.currentFiringMode = gun.firingMode[0];
                     break;
                 case GunSO.GunType.PBG:
                     gun.criticalChance = 0.1f;
                     gun.criticalDamageRate = 10f;
                     gun.currentMagazineBullets = gun.maxMagazineBullets;
                     gun.currentTotalBullets = gun.maxMagazineBullets * gun.startingMagazines;
-                    gun.currentFiringMode = gun.firingMode[gun.firingModeIndex];
+                    gun.currentFiringMode = gun.firingMode[0];
                     break;
             }
         }
@@ -104,6 +118,16 @@ public class GunScript : MonoBehaviour
     private void LoadReferenceVariables()
     {
         _fpscam = GameObject.FindGameObjectWithTag("MainCamera");
+        _gunVisual = _fpscam.transform.GetChild(0).gameObject;
+        _meshFilter = _gunVisual.GetComponent<MeshFilter>();
+        _meshRenderer = _gunVisual.GetComponent<MeshRenderer>();
+        _bulletSpawn = _gunVisual.transform.GetChild(0);
+    }
+
+    private void LoadGunVisual()
+    {
+        _meshFilter.mesh = scriptableObject._gunMesh;
+        _meshRenderer.material = scriptableObject._gunMaterial;
     }
 
     private void SetShootingVariables()
@@ -111,14 +135,14 @@ public class GunScript : MonoBehaviour
         shootDelay = Time.time + 60 / scriptableObject.firerate;
     }
 
-    private void SetDefaultGun()
+    private void SetGun()
     {
         scriptableObject = _guns[gunsIndexValue];
     }
 
     private void Update()
     {
-        PlayerShootInput();
+        PlayerGunInputs();
         ManageAndUpdateUI();
     }
 
@@ -148,9 +172,15 @@ public class GunScript : MonoBehaviour
         {
             Debug.Log("Acabou bala R.I.P");
         }
+
+        /* Metodo avançado.
+        scriptableObject.currentTotalBullets = scriptableObject.currentMagazineBullets + scriptableObject.currentTotalBullets;
+        scriptableObject.currentMagazineBullets = scriptableObject.currentTotalBullets >= scriptableObject.maxMagazineBullets ? scriptableObject.maxMagazineBullets : scriptableObject.currentTotalBullets;
+        scriptableObject.currentTotalBullets = scriptableObject.currentTotalBullets - scriptableObject.currentMagazineBullets;
+        */
     }
 
-    private void PlayerShootInput()
+    private void PlayerGunInputs()
     {
         if (Input.GetButton("Fire1") && Time.time >= shootDelay && scriptableObject.currentMagazineBullets > 0)
         {
@@ -174,7 +204,7 @@ public class GunScript : MonoBehaviour
                 case GunSO.FiringMode.burst:
                     if (scriptableObject.hasReleasedTrigger)
                     {
-                        shootDelay = Time.time + 60f / scriptableObject.firerate;
+                        shootDelay = Time.time + (60f / scriptableObject.firerate) * 3;
                         Shoot();
                         scriptableObject.hasReleasedTrigger = false;
                     }
@@ -189,6 +219,22 @@ public class GunScript : MonoBehaviour
         {
             ReloadGun();
         }
+        if (Input.GetButtonDown("Swap"))
+        {
+            //gunsIndexValue = gunsIndexValue < _guns.Length ? gunsIndexValue++ : gunsIndexValue = 0;
+            if (gunsIndexValue < _guns.Length - 1)
+                gunsIndexValue++;
+            else
+                gunsIndexValue = 0;
+            ReloadGunInfos();
+            Debug.Log("Swap");
+        }
+        if (Input.GetButtonDown("ChangeFiringMode"))
+        {
+            scriptableObject.firingModeIndex++;
+            scriptableObject.currentFiringMode = scriptableObject.firingMode[scriptableObject.firingModeIndex];
+        }
+        
     }
 
     private void Shoot()
@@ -234,9 +280,10 @@ public class GunScript : MonoBehaviour
             {
                 if (hit.transform.gameObject.CompareTag("Enemy"))
                 {
-                    //Dmg enemy.
+                    hit.transform.gameObject.GetComponent<EnemyScript>().ApplyDamage(scriptableObject.dmg);
                 }
             }
+            Instantiate(scriptableObject._bullet, _bulletSpawn.transform.position, _bulletSpawn.transform.rotation);
         }
         else
         {
@@ -246,9 +293,12 @@ public class GunScript : MonoBehaviour
             {
                 if (hit.transform.gameObject.CompareTag("Enemy"))
                 {
-                    //Dmg enemy.
+                    hit.transform.gameObject.GetComponent<EnemyScript>().ApplyDamage(scriptableObject.dmg);
                 }
             }
+            var b = Instantiate(scriptableObject._bullet, _bulletSpawn.transform.position, _bulletSpawn.transform.rotation);
+            b.transform.Rotate(bulletSpread.x * 2, bulletSpread.y * 2, bulletSpread.z * 2);
+            Destroy(b.gameObject, .3f);
         }
     }
 
