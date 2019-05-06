@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efbc98945ae99a9488d9433038f514b7, type: 3}
+  m_Name: Pistol
+  m_EditorClassIdentifier: 
+  name: 9mm
+  description: 9mm gun, user as a secondary weapon.
+  gunType: 1
+  shootingType: 0
+  firingMode: 00000000
+  currentFiringMode: 0
+  dmg: 20
+  range: 100
+  firerate: 300
+  verticalRecoil: 3
+  horizontalRecoil: 0
+  reloadTime: 2
+  maxMagazineBullets: 12
+  startingMagazines: 3
+  numberOfPellets: 0
+  criticalChance: 0.3
+  criticalDamageRate: 1.5
+  currentMagazineBullets: 12
+  currentTotalBullets: 31
+  isReloading: 0
+  isShooting: 0
+  startHasLoadedBullets: 0
+  hasReleasedTrigger: 1
+  _gunMesh: {fileID: 4300000, guid: a2533afbbe8cfb64080c144be7467522, type: 3}
+  _gunMaterial: {fileID: 2100000, guid: c22621f40be6c1e49a06d980171a742a, type: 2}
+  _bullet: {fileID: 4512465721820646795, guid: b708a968939744346be02e1b338af4c8, type: 3}
+  debugMode: 0
