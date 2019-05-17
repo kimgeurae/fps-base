@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efbc98945ae99a9488d9433038f514b7, type: 3}
+  m_Name: SO_Model870
+  m_EditorClassIdentifier: 
+  name: Remington 870
+  description: The Remington Model 870 is a pump-action shotgun manufactured by Remington
+    Arms Company, LLC. It is widely used by the public for sport shooting, hunting,
+    and self-defense and used by law enforcement and military organizations worldwide.
+  gunType: 4
+  shootingType: 0
+  firingMode: 04000000
+  currentFiringMode: 4
+  dmg: 12
+  range: 12
+  firerate: 200
+  verticalRecoil: 30
+  horizontalRecoil: 0
+  reloadTime: 6
+  maxMagazineBullets: 4
+  startingMagazines: 3
+  numberOfPellets: 20
+  criticalChance: 0.2
+  criticalDamageRate: 2
+  currentMagazineBullets: 4
+  currentTotalBullets: 12
+  isReloading: 0
+  isShooting: 0
+  startHasLoadedBullets: 0
+  hasReleasedTrigger: 1
+  _gunMesh: {fileID: 4300000, guid: 95addcfa45329854fbfcf27cbcbc68a4, type: 3}
+  _gunMaterial: {fileID: 2100000, guid: e826b1c41bd171c4d978c257dceee3c5, type: 2}
+  _bullet: {fileID: 4512465721820646795, guid: b708a968939744346be02e1b338af4c8, type: 3}
+  debugMode: 1

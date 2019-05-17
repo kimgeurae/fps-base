@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efbc98945ae99a9488d9433038f514b7, type: 3}
+  m_Name: SO_HeavyWeapon
+  m_EditorClassIdentifier: 
+  name: 
+  description: 
+  gunType: 0
+  shootingType: 0
+  firingMode: 
+  currentFiringMode: 0
+  dmg: 0
+  range: 0
+  firerate: 0
+  verticalRecoil: 0
+  horizontalRecoil: 0
+  reloadTime: 0
+  maxMagazineBullets: 0
+  startingMagazines: 0
+  numberOfPellets: 0
+  criticalChance: 0
+  criticalDamageRate: 0
+  currentMagazineBullets: 0
+  currentTotalBullets: 0
+  isReloading: 0
+  isShooting: 0
+  startHasLoadedBullets: 0
+  hasReleasedTrigger: 0
+  _gunMesh: {fileID: 4300012, guid: 8233791bab55837408982f359042ae45, type: 3}
+  _gunMaterial: {fileID: 2100000, guid: 52990b8f3d88e124dbe93b83a73a66f8, type: 2}
+  _bullet: {fileID: 0}
+  debugMode: 0
